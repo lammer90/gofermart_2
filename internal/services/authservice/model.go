@@ -16,8 +16,8 @@ type Claims struct {
 	Login string
 }
 
-var NotAuthorized = errors.New("user not authorized")
+var ErrNotAuthorized = errors.New("user not authorized")
 
-var UserAlreadyExist = errors.New("user already exist")
+var ErrUserAlreadyExist = errors.New("user already exist")
 
-var UserDidntFind = errors.New("user didn't find")
+var ErrUserDidntFind = errors.New("user didn't find")

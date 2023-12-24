@@ -11,5 +11,6 @@ type WithdrawService interface {
 	FindBalance(login string) (*withdraw.BalanceResponse, error)
 }
 
-var NotValidLuhnSum = errors.New("not valid luhn sum")
-var NotEnoughMoney = errors.New("not enough money")
+var ErrNotValidLuhnSum = errors.New("not valid luhn sum")
+
+var ErrNotEnoughMoney = errors.New("not enough money")

@@ -27,7 +27,7 @@ func (a authenticationHandler) Register(res http.ResponseWriter, req *http.Reque
 	}
 
 	token, err := a.authenticationService.ToRegisterUser(request.Login, request.Password)
-	if err != nil && err == authservice.UserAlreadyExist {
+	if err != nil && err == authservice.ErrUserAlreadyExist {
 		res.WriteHeader(http.StatusConflict)
 		return
 	}
@@ -54,7 +54,7 @@ func (a authenticationHandler) Login(res http.ResponseWriter, req *http.Request)
 	}
 
 	token, err := a.authenticationService.ToLoginUser(request.Login, request.Password)
-	if err != nil && (err == authservice.UserDidntFind || err == authservice.NotAuthorized) {
+	if err != nil && (err == authservice.ErrUserDidntFind || err == authservice.ErrNotAuthorized) {
 		res.WriteHeader(http.StatusUnauthorized)
 		return
 	}

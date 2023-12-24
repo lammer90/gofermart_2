@@ -12,8 +12,8 @@ type OrderService interface {
 	UpdateAccrual(login, number string, status string, accrual float32) error
 }
 
-var OrderNumberAlreadyExistThisUser = errors.New("order number already exist this user")
+var ErrOrderNumberAlreadyExistThisUser = errors.New("order number already exist this user")
 
-var OrderNumberAlreadyExistAnotherUser = errors.New("order number already exist another user")
+var ErrOrderNumberAlreadyExistAnotherUser = errors.New("order number already exist another user")
 
-var NotValidLuhnSum = errors.New("not valid luhn sum")
+var ErrNotValidLuhnSum = errors.New("not valid luhn sum")

@@ -32,11 +32,11 @@ func (w withdrawHandler) Save(res http.ResponseWriter, req *http.Request) {
 	}
 
 	err = w.withdrawService.Save(request.Order, login, request.Sum)
-	if err != nil && err == withdrawservice.NotValidLuhnSum {
+	if err != nil && err == withdrawservice.ErrNotValidLuhnSum {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
-	if err != nil && err == withdrawservice.NotEnoughMoney {
+	if err != nil && err == withdrawservice.ErrNotEnoughMoney {
 		res.WriteHeader(http.StatusPaymentRequired)
 		return
 	}

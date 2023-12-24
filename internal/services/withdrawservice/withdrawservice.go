@@ -22,7 +22,7 @@ func New(withdrawRepository withdrawstorage.WithdrawRepository, balanceRepositor
 func (w withdrawServiceImpl) Save(order, login string, sum float32) error {
 	valid, err := luhn.IsValid(order)
 	if err != nil || !valid {
-		return NotValidLuhnSum
+		return ErrNotValidLuhnSum
 	}
 
 	tx, err := w.db.Begin()
@@ -36,7 +36,7 @@ func (w withdrawServiceImpl) Save(order, login string, sum float32) error {
 		return err
 	}
 	if balanceSum.BonusSum < sum {
-		return NotEnoughMoney
+		return ErrNotEnoughMoney
 	}
 	wit := &withdraw.Withdraw{Login: login, Order: order, Sum: sum, ProcessedAt: time.Now()}
 	err = w.withdrawRepository.Save(wit, tx)

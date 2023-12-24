@@ -30,15 +30,15 @@ func (o orderHandler) Save(res http.ResponseWriter, req *http.Request) {
 	number := string(body[:])
 
 	err = o.orderService.Save(number, login)
-	if err != nil && err == orderservice.NotValidLuhnSum {
+	if err != nil && err == orderservice.ErrNotValidLuhnSum {
 		res.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
-	if err != nil && err == orderservice.OrderNumberAlreadyExistThisUser {
+	if err != nil && err == orderservice.ErrOrderNumberAlreadyExistThisUser {
 		res.WriteHeader(http.StatusOK)
 		return
 	}
-	if err != nil && err == orderservice.OrderNumberAlreadyExistAnotherUser {
+	if err != nil && err == orderservice.ErrOrderNumberAlreadyExistAnotherUser {
 		res.WriteHeader(http.StatusConflict)
 		return
 	}

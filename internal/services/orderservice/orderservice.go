@@ -25,7 +25,7 @@ func New(repository orderstorage.OrderRepository, balanceRepository balance.Bala
 func (o orderServiceImpl) Save(number, login string) error {
 	valid, err := luhn.IsValid(number)
 	if err != nil || !valid {
-		return NotValidLuhnSum
+		return ErrNotValidLuhnSum
 	}
 
 	existedOrder, err := o.repository.FindByNumber(number)
@@ -34,9 +34,9 @@ func (o orderServiceImpl) Save(number, login string) error {
 	}
 	if existedOrder != nil {
 		if login == existedOrder.Login {
-			return OrderNumberAlreadyExistThisUser
+			return ErrOrderNumberAlreadyExistThisUser
 		}
-		return OrderNumberAlreadyExistAnotherUser
+		return ErrOrderNumberAlreadyExistAnotherUser
 	}
 
 	newOrder := &order.Order{Login: login, Number: number, Status: order.NEW, Accrual: 0.00, UploadedAt: time.Now()}
@@ -44,7 +44,7 @@ func (o orderServiceImpl) Save(number, login string) error {
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgerrcode.IsIntegrityConstraintViolation(pgErr.Code) {
-			return OrderNumberAlreadyExistAnotherUser
+			return ErrOrderNumberAlreadyExistAnotherUser
 		}
 		return err
 	}

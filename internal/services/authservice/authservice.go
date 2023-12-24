@@ -25,10 +25,10 @@ func (a *authenticationServiceImpl) CheckAuthentication(tokenString string) (str
 			return []byte(a.privateKey), nil
 		})
 	if err != nil {
-		return "", NotAuthorized
+		return "", ErrNotAuthorized
 	}
 	if !token.Valid || claims.Login == "" {
-		return "", NotAuthorized
+		return "", ErrNotAuthorized
 	}
 	return claims.Login, nil
 }
@@ -39,7 +39,7 @@ func (a *authenticationServiceImpl) ToRegisterUser(login, password string) (toke
 		return "", err
 	}
 	if existHash != "" {
-		return "", UserAlreadyExist
+		return "", ErrUserAlreadyExist
 	}
 
 	newHash := buildHash(login, password)
@@ -65,12 +65,12 @@ func (a *authenticationServiceImpl) ToLoginUser(login, password string) (token s
 		return "", err
 	}
 	if existHash == "" {
-		return "", UserDidntFind
+		return "", ErrUserDidntFind
 	}
 
 	sentHash := buildHash(login, password)
 	if existHash != sentHash {
-		return "", NotAuthorized
+		return "", ErrNotAuthorized
 	}
 
 	token, err = buildJWTString(login, a.privateKey)
