@@ -63,10 +63,10 @@ func (o orderServiceImpl) FindAll(login string) ([]order.OrderResponse, error) {
 	}
 	for _, ord := range orders {
 		resp := order.OrderResponse{
-			ord.Number,
-			order.Statuses[ord.Status-1],
-			ord.Accrual,
-			ord.UploadedAt.Format("2006-01-02T15:04:05-07:00")}
+			Number:     ord.Number,
+			Status:     order.Statuses[ord.Status-1],
+			Accrual:    ord.Accrual,
+			UploadedAt: ord.UploadedAt.Format("2006-01-02T15:04:05-07:00")}
 		response = append(response, resp)
 	}
 	return response, nil

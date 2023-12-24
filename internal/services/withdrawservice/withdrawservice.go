@@ -65,9 +65,9 @@ func (w withdrawServiceImpl) FindAll(login string) ([]withdraw.WithdrawResponse,
 
 	for _, with := range withdraws {
 		resp := withdraw.WithdrawResponse{
-			with.Order,
-			with.Sum,
-			with.ProcessedAt.Format("2006-01-02T15:04:05-07:00")}
+			Order:       with.Order,
+			Sum:         with.Sum,
+			ProcessedAt: with.ProcessedAt.Format("2006-01-02T15:04:05-07:00")}
 		response = append(response, resp)
 	}
 	return response, nil

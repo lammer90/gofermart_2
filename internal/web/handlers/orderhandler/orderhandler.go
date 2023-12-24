@@ -13,7 +13,7 @@ type orderHandler struct {
 	cookieStore  *sessions.CookieStore
 }
 
-func New(orderService orderservice.OrderService, cookieStore *sessions.CookieStore) OrderRestApiProvider {
+func New(orderService orderservice.OrderService, cookieStore *sessions.CookieStore) OrderRestAPIProvider {
 	return orderHandler{
 		orderService: orderService,
 		cookieStore:  cookieStore,
@@ -57,7 +57,7 @@ func (o orderHandler) FindAll(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if orders == nil || len(orders) == 0 {
+	if len(orders) == 0 {
 		res.WriteHeader(http.StatusNoContent)
 		return
 	}

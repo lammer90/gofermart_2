@@ -2,7 +2,7 @@ package authhandler
 
 import "net/http"
 
-type AuthenticationRestApiProvider interface {
+type AuthenticationRestAPIProvider interface {
 	Register(http.ResponseWriter, *http.Request)
 	Login(http.ResponseWriter, *http.Request)
 }

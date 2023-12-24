@@ -11,7 +11,7 @@ type authenticationHandler struct {
 	authenticationService authservice.AuthenticationService
 }
 
-func New(authenticationService authservice.AuthenticationService) AuthenticationRestApiProvider {
+func New(authenticationService authservice.AuthenticationService) AuthenticationRestAPIProvider {
 	return authenticationHandler{
 		authenticationService: authenticationService,
 	}

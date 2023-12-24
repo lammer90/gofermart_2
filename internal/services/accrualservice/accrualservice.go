@@ -20,7 +20,7 @@ func New(orderService orderservice.OrderService, accrualAddress string) AccrualS
 
 func (a accrualScheduledServiceImpl) Start() {
 	ticker := time.NewTicker(2 * time.Second)
-	for _ = range ticker.C {
+	for range ticker.C {
 		logger.Log.Info(">> Start")
 		numbers, err := a.orderService.FindAllToProcess()
 		if err != nil {
@@ -41,6 +41,7 @@ func (a accrualScheduledServiceImpl) Start() {
 				continue
 			}
 			a.orderService.UpdateAccrual(o.Login, o.Number, accrualResponse.Status, accrualResponse.Accrual)
+			response.Body.Close()
 		}
 	}
 }

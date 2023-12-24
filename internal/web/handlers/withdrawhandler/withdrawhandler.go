@@ -13,7 +13,7 @@ type withdrawHandler struct {
 	cookieStore     *sessions.CookieStore
 }
 
-func New(withdrawService withdrawservice.WithdrawService, cookieStore *sessions.CookieStore) WithdrawRestApiProvider {
+func New(withdrawService withdrawservice.WithdrawService, cookieStore *sessions.CookieStore) WithdrawRestAPIProvider {
 	return withdrawHandler{
 		withdrawService: withdrawService,
 		cookieStore:     cookieStore,
@@ -56,7 +56,7 @@ func (w withdrawHandler) FindAll(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if withdraws == nil || len(withdraws) == 0 {
+	if len(withdraws) == 0 {
 		res.WriteHeader(http.StatusNoContent)
 		return
 	}

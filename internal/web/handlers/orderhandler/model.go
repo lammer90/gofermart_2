@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-type OrderRestApiProvider interface {
+type OrderRestAPIProvider interface {
 	Save(http.ResponseWriter, *http.Request)
 	FindAll(http.ResponseWriter, *http.Request)
 }

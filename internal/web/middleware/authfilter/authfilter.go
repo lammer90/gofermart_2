@@ -29,7 +29,7 @@ func New(authenticationService authservice.AuthenticationService, cookieStore *s
 					w.WriteHeader(http.StatusUnauthorized)
 					return
 				}
-				if found == false {
+				if !found {
 					logger.Log.Error("Not Authorized")
 					w.WriteHeader(http.StatusUnauthorized)
 					return

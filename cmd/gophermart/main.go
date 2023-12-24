@@ -49,9 +49,9 @@ func main() {
 }
 
 func shortenerRouter(
-	authProvider authhandler.AuthenticationRestApiProvider,
-	orderProvider orderhandler.OrderRestApiProvider,
-	withdrawProvider withdrawhandler.WithdrawRestApiProvider,
+	authProvider authhandler.AuthenticationRestAPIProvider,
+	orderProvider orderhandler.OrderRestAPIProvider,
+	withdrawProvider withdrawhandler.WithdrawRestAPIProvider,
 	middlewares ...func(next http.Handler) http.Handler) chi.Router {
 
 	router := chi.NewRouter()
