@@ -2,10 +2,11 @@ package withdrawhandler
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/gorilla/sessions"
 	"github.com/lammer90/gofermart/internal/dto/withdraw"
 	"github.com/lammer90/gofermart/internal/services/withdrawservice"
-	"net/http"
 )
 
 type withdrawHandler struct {

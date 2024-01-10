@@ -2,9 +2,10 @@ package authhandler
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/lammer90/gofermart/internal/dto/auth"
 	"github.com/lammer90/gofermart/internal/services/authservice"
-	"net/http"
 )
 
 type authenticationHandler struct {

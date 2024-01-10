@@ -4,7 +4,19 @@ import (
 	"go.uber.org/zap"
 )
 
-var Log *zap.Logger = zap.NewNop()
+type log struct {
+	*zap.Logger
+}
+
+func (l log) Error(msg string, err error) {
+	l.Logger.Error(msg, zap.Error(err))
+}
+
+func (l log) ErrorMsg(msg string) {
+	l.Logger.Error(msg)
+}
+
+var Log log
 
 func InitLogger(level string) error {
 	lvl, err := zap.ParseAtomicLevel(level)
@@ -17,6 +29,6 @@ func InitLogger(level string) error {
 	if err != nil {
 		return err
 	}
-	Log = zl
+	Log.Logger = zl
 	return nil
 }

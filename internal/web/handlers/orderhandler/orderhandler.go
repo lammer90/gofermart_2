@@ -2,10 +2,11 @@ package orderhandler
 
 import (
 	"encoding/json"
-	"github.com/gorilla/sessions"
-	"github.com/lammer90/gofermart/internal/services/orderservice"
 	"io"
 	"net/http"
+
+	"github.com/gorilla/sessions"
+	"github.com/lammer90/gofermart/internal/services/orderservice"
 )
 
 type orderHandler struct {

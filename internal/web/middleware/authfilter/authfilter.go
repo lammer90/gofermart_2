@@ -1,11 +1,11 @@
 package authfilter
 
 import (
+	"net/http"
+
 	"github.com/gorilla/sessions"
 	"github.com/lammer90/gofermart/internal/logger"
 	"github.com/lammer90/gofermart/internal/services/authservice"
-	"go.uber.org/zap"
-	"net/http"
 )
 
 func New(authenticationService authservice.AuthenticationService, cookieStore *sessions.CookieStore) func(next http.Handler) http.Handler {
@@ -25,12 +25,12 @@ func New(authenticationService authservice.AuthenticationService, cookieStore *s
 					}
 				}
 				if err != nil {
-					logger.Log.Error("Error during auth user", zap.Error(err))
+					logger.Log.Error("Error during auth user", err)
 					w.WriteHeader(http.StatusUnauthorized)
 					return
 				}
 				if !found {
-					logger.Log.Error("Not Authorized")
+					logger.Log.ErrorMsg("Not Authorized")
 					w.WriteHeader(http.StatusUnauthorized)
 					return
 				}

@@ -1,8 +1,8 @@
 package main
 
 import (
+	"context"
 	"database/sql"
-	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/sessions"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/lammer90/gofermart/internal/config"
@@ -15,11 +15,11 @@ import (
 	"github.com/lammer90/gofermart/internal/services/authservice"
 	"github.com/lammer90/gofermart/internal/services/orderservice"
 	"github.com/lammer90/gofermart/internal/services/withdrawservice"
+	"github.com/lammer90/gofermart/internal/web/app"
 	"github.com/lammer90/gofermart/internal/web/handlers/authhandler"
 	"github.com/lammer90/gofermart/internal/web/handlers/orderhandler"
 	"github.com/lammer90/gofermart/internal/web/handlers/withdrawhandler"
 	"github.com/lammer90/gofermart/internal/web/middleware/authfilter"
-	"net/http"
 )
 
 func main() {
@@ -43,29 +43,11 @@ func main() {
 	withSrv := withdrawservice.New(withdrawstorage.New(db), balRep, db)
 	withHdl := withdrawhandler.New(withSrv, cookieStore)
 
-	go accrualservice.New(orderSrv, config.AccrualAddress).Start()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go accrualservice.New(orderSrv, config.AccrualAddress).Start(ctx)
 
-	http.ListenAndServe(config.ServAddress, shortenerRouter(authHdl, orderHdl, withHdl, authMdl))
-}
-
-func shortenerRouter(
-	authProvider authhandler.AuthenticationRestAPIProvider,
-	orderProvider orderhandler.OrderRestAPIProvider,
-	withdrawProvider withdrawhandler.WithdrawRestAPIProvider,
-	middlewares ...func(next http.Handler) http.Handler) chi.Router {
-
-	router := chi.NewRouter()
-	for _, f := range middlewares {
-		router.Use(f)
-	}
-	router.Post("/api/user/register", authProvider.Register)
-	router.Post("/api/user/login", authProvider.Login)
-	router.Post("/api/user/orders", orderProvider.Save)
-	router.Get("/api/user/orders", orderProvider.FindAll)
-	router.Get("/api/user/balance", withdrawProvider.FindBalance)
-	router.Post("/api/user/balance/withdraw", withdrawProvider.Save)
-	router.Get("/api/user/withdrawals", withdrawProvider.FindAll)
-	return router
+	app.Start(config.ServAddress, authHdl, orderHdl, withHdl, authMdl)
 }
 
 func InitDB(driverName, dataSource string) *sql.DB {

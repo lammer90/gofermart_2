@@ -1,12 +1,13 @@
 package accrualservice
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/lammer90/gofermart/internal/logger"
-	"github.com/lammer90/gofermart/internal/services/orderservice"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
+
+	"github.com/lammer90/gofermart/internal/logger"
+	"github.com/lammer90/gofermart/internal/services/orderservice"
 )
 
 type accrualScheduledServiceImpl struct {
@@ -18,30 +19,35 @@ func New(orderService orderservice.OrderService, accrualAddress string) AccrualS
 	return &accrualScheduledServiceImpl{orderService: orderService, accrualAddress: accrualAddress}
 }
 
-func (a accrualScheduledServiceImpl) Start() {
+func (a accrualScheduledServiceImpl) Start(ctx context.Context) {
 	ticker := time.NewTicker(2 * time.Second)
-	for range ticker.C {
-		logger.Log.Info(">> Start")
-		numbers, err := a.orderService.FindAllToProcess()
-		if err != nil {
-			logger.Log.Error("Error during get orders to process", zap.Error(err))
-			continue
-		}
-		for _, o := range numbers {
-			response, err := http.Get(a.accrualAddress + "/api/orders/" + o.Number)
+	for {
+		select {
+		case <-ticker.C:
+			logger.Log.Info(">> Start")
+			numbers, err := a.orderService.FindAllToProcess()
 			if err != nil {
-				logger.Log.Error("Error during get accrual by number "+o.Number, zap.Error(err))
+				logger.Log.Error("Error during get orders to process", err)
 				continue
 			}
-			var accrualResponse AccrualResponse
-			dec := json.NewDecoder(response.Body)
-			err = dec.Decode(&accrualResponse)
-			if err != nil {
-				logger.Log.Error("Error during get accrual by number "+o.Number, zap.Error(err))
-				continue
+			for _, o := range numbers {
+				response, err := http.Get(a.accrualAddress + "/api/orders/" + o.Number)
+				if err != nil {
+					logger.Log.Error("Error during get accrual by number "+o.Number, err)
+					continue
+				}
+				var accrualResponse AccrualResponse
+				dec := json.NewDecoder(response.Body)
+				err = dec.Decode(&accrualResponse)
+				if err != nil {
+					logger.Log.Error("Error during get accrual by number "+o.Number, err)
+					continue
+				}
+				a.orderService.UpdateAccrual(o.Login, o.Number, accrualResponse.Status, accrualResponse.Accrual)
+				response.Body.Close()
 			}
-			a.orderService.UpdateAccrual(o.Login, o.Number, accrualResponse.Status, accrualResponse.Accrual)
-			response.Body.Close()
+		case <-ctx.Done():
+			return
 		}
 	}
 }

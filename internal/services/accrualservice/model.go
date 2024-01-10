@@ -1,7 +1,9 @@
 package accrualservice
 
+import "context"
+
 type AccrualScheduledService interface {
-	Start()
+	Start(ctx context.Context)
 }
 
 type AccrualResponse struct {
